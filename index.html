@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welkit – AI Marketing Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #060611;
+  --bg2:     #0b0b1c;
+  --bg3:     #101025;
+  --border:  #1a1a35;
+  --border2: #222245;
+  --text:    #e8e4ff;
+  --text2:   #7a75a0;
+  --text3:   #3a3860;
+  --accent:  #5b4fea;
+  --accent2: #00d4c8;
+  --gold:    #f5c842;
+  --red:     #ff6b6b;
+  --green:   #00d4c8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+
+/* TOPBAR */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,#5b4fea,#00d4c8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;box-shadow:0 0 16px rgba(91,79,234,0.5);}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-0.5px;}
+.logo-text span{color:var(--accent);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.badge{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent2);background:rgba(0,212,200,0.08);border:1px solid rgba(0,212,200,0.2);padding:3px 10px;border-radius:20px;}
+.lang-switch{display:flex;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:2px;gap:2px;}
+.lang-btn{padding:3px 10px;border-radius:5px;border:none;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text3);font-family:inherit;transition:all 0.15s;}
+.lang-btn.on{background:var(--accent);color:#fff;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:290px 1fr;height:calc(100vh - 52px);}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px;}
+.sidebar-body::-webkit-scrollbar{width:3px;}
+.sidebar-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.s-lbl{font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+
+/* Chat */
+.chat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.chat::-webkit-scrollbar{width:3px;}
+.msg{padding:7px 11px;border-radius:8px;font-size:12px;line-height:1.5;max-width:94%;}
+.mb{background:var(--bg3);color:var(--text2);align-self:flex-start;border:1px solid var(--border);}
+.mu{background:rgba(91,79,234,0.15);color:#b8b0ff;align-self:flex-end;border:1px solid rgba(91,79,234,0.25);}
+.ms{background:rgba(0,212,200,0.06);color:var(--accent2);font-size:10.5px;align-self:center;text-align:center;border:1px solid rgba(0,212,200,0.15);width:100%;max-width:100%;}
+.mt{color:var(--text3);font-style:italic;background:var(--bg3);border:1px solid var(--border);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* Quick prompts */
+.quick-list{display:flex;flex-direction:column;gap:4px;}
+.qbtn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--text2);cursor:pointer;text-align:left;line-height:1.45;transition:all 0.15s;font-family:inherit;}
+.qbtn:hover{border-color:rgba(91,79,234,0.4);color:var(--text);background:var(--bg3);}
+
+/* Settings */
+.settings{display:flex;flex-direction:column;gap:10px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field-lbl{font-size:10px;color:var(--text3);}
+.field input,.field select{background:var(--bg);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;font-size:12px;color:var(--text);outline:none;font-family:inherit;width:100%;transition:border-color 0.15s;}
+.field input:focus,.field select:focus{border-color:rgba(91,79,234,0.5);}
+.field input::placeholder{color:var(--text3);}
+
+/* Chips */
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 13px;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:500;font-family:inherit;}
+.chip.on{border-color:rgba(91,79,234,0.6);color:#9b91ff;background:rgba(91,79,234,0.1);}
+.chip:hover:not(.on){border-color:var(--border2);color:var(--text2);}
+.qchips{display:flex;gap:5px;}
+.qchip{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 4px;font-size:10.5px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:500;text-align:center;font-family:inherit;}
+.qchip .qi{display:block;font-size:13px;margin-bottom:2px;}
+.qchip.on{border-color:rgba(245,200,66,0.5);color:var(--gold);background:rgba(245,200,66,0.08);}
+.qchip:hover:not(.on){border-color:var(--border2);color:var(--text2);}
+
+/* Rules */
+.rules{background:var(--bg);border:1px solid rgba(0,212,200,0.1);border-radius:10px;padding:11px;display:flex;flex-direction:column;gap:7px;}
+.rule{display:flex;align-items:flex-start;gap:8px;}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.dot-r{background:var(--red);}
+.dot-g{background:var(--green);}
+.dot-p{background:var(--accent);}
+.rule-txt{font-size:11px;color:#4e6e6a;line-height:1.45;}
+.r-red{color:var(--red);font-weight:500;}
+.r-grn{color:var(--green);font-weight:500;}
+.r-prp{color:#9b91ff;font-weight:500;}
+
+/* Input area */
+.input-area{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(--bg2);display:flex;gap:7px;}
+.main-input{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-size:12.5px;color:var(--text);outline:none;font-family:inherit;resize:none;height:40px;transition:border-color 0.15s;}
+.main-input:focus{border-color:rgba(91,79,234,0.5);}
+.main-input::placeholder{color:var(--text3);}
+.send-btn{width:40px;height:40px;border-radius:8px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;box-shadow:0 2px 12px rgba(91,79,234,0.4);}
+.send-btn:hover{background:#6b5ffa;transform:translateY(-1px);}
+.send-btn:active{transform:scale(0.95);}
+.send-btn:disabled{background:var(--border2);cursor:not-allowed;box-shadow:none;transform:none;}
+.send-btn svg{width:15px;height:15px;fill:#fff;}
+
+/* PREVIEW PANE */
+.preview{background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+.preview-top{height:50px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
+.preview-lbl{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.pactions{display:flex;gap:7px;}
+.pbtn{background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:5px 14px;font-size:11.5px;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.pbtn:hover{color:var(--text);background:var(--bg3);}
+.pbtn.prim{background:rgba(91,79,234,0.12);border-color:rgba(91,79,234,0.4);color:#9b91ff;}
+.pbtn.prim:hover{background:rgba(91,79,234,0.22);}
+.pbtn.gold{background:rgba(245,200,66,0.08);border-color:rgba(245,200,66,0.3);color:var(--gold);}
+.pbtn.gold:hover{background:rgba(245,200,66,0.16);}
+
+.preview-body{flex:1;overflow:auto;padding:24px;display:flex;align-items:center;justify-content:center;}
+.preview-body::-webkit-scrollbar{width:4px;}
+.preview-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* States */
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;min-height:340px;width:100%;}
+.state-icon{width:56px;height:56px;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.state-title{font-size:15px;font-weight:500;color:var(--text3);}
+.state-sub{font-size:12px;color:var(--text3);max-width:300px;line-height:1.6;opacity:0.8;}
+.tips{display:flex;flex-direction:column;gap:6px;max-width:340px;margin-top:4px;}
+.tip{font-size:11px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;text-align:left;opacity:0.8;}
+.tip b{color:var(--accent2);font-weight:500;}
+
+.spinner{width:34px;height:34px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.gen-steps{display:flex;flex-direction:column;gap:7px;align-items:center;}
+.gstep{font-size:12px;color:var(--text3);transition:color 0.3s;}
+.gstep.active{color:var(--accent);}
+.gstep.done{color:var(--accent2);}
+.gstep.done::before{content:'✓ ';}
+.gen-note{font-size:11px;color:var(--text3);opacity:0.6;text-align:center;max-width:200px;line-height:1.5;}
+
+.ready-btns{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+.rbtn{border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.rbtn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 16px rgba(91,79,234,0.5);}
+.rbtn-primary:hover{background:#6b5ffa;transform:translateY(-1px);}
+.rbtn-sec{background:var(--bg2);color:var(--text2);border:1px solid var(--border2);}
+.rbtn-sec:hover{color:var(--text);border-color:var(--border);}
+
+hr.sep{height:1px;background:var(--border);border:none;margin:2px 0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <img src="data:image/png;base64,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" style="width:30px;height:30px;border-radius:8px;object-fit:cover;box-shadow:0 0 16px rgba(91,79,234,0.5);" alt="logo">
+    <div class="logo-text">Wel<span>kit</span></div>
+  </div>
+  <div class="topbar-right">
+    <span class="badge" id="badgeText"></span>
+    <div class="lang-switch">
+      <button class="lang-btn on" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-body">
+
+      <div>
+        <div class="s-lbl" id="lbl-chat"></div>
+        <div class="chat" id="chatBox">
+          <div class="msg ms" id="sysMsg"></div>
+          <div class="msg mb" id="welcomeMsg"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="s-lbl" id="lbl-quick"></div>
+        <div class="quick-list" id="quickList"></div>
+      </div>
+
+      <hr class="sep">
+
+      <div>
+        <div class="s-lbl" id="lbl-settings"></div>
+        <div class="settings">
+          <div class="field">
+            <span class="field-lbl" id="lbl-api"></span>
+            <input type="password" id="apiKey" placeholder="sk-ant-...">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-ib"></span>
+            <input type="text" id="ibCode" placeholder="IB-WL-0000" value="IB-WL-0000">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-lang"></span>
+            <select id="matLang">
+              <option value="English">English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Turkish">Turkish</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Indonesian">Indonesian</option>
+              <option value="Thai">Thai</option>
+              <option value="Vietnamese">Vietnamese</option>
+              <option value="Chinese">Chinese</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-fmt"></span>
+            <div class="chips">
+              <button class="chip on" onclick="setFmt(this,'flyer')">Flyer</button>
+              <button class="chip" onclick="setFmt(this,'banner')">Banner</button>
+              <button class="chip" onclick="setFmt(this,'social')">Social</button>
+              <button class="chip" onclick="setFmt(this,'email')">Email</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-qual"></span>
+            <div class="qchips">
+              <button class="qchip" onclick="setQuality(this,'standard')"><span class="qi">⚡</span>Fast</button>
+              <button class="qchip on" onclick="setQuality(this,'premium')"><span class="qi">✦</span>Premium</button>
+              <button class="qchip" onclick="setQuality(this,'ultra')"><span class="qi">💎</span>Ultra</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <div>
+        <div class="s-lbl" id="lbl-rules"></div>
+        <div class="rules">
+          <div class="rule"><span class="dot dot-r"></span><span class="rule-txt" id="rule1"></span></div>
+          <div class="rule"><span class="dot dot-r"></span><span class="rule-txt" id="rule2"></span></div>
+          <div class="rule"><span class="dot dot-g"></span><span class="rule-txt" id="rule3"></span></div>
+          <div class="rule"><span class="dot dot-p"></span><span class="rule-txt" id="rule4"></span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="input-area">
+      <textarea class="main-input" id="msgInput" rows="1" onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="send()">
+        <svg viewBox="0 0 24 24"><path d="M2 12L22 2L12 22L10 14L2 12Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="preview-top">
+      <span class="preview-lbl" id="previewLbl">— preview</span>
+      <div class="pactions" id="pActions" style="display:none;">
+        <button class="pbtn" onclick="regen()" id="btnRegen"></button>
+        <button class="pbtn gold" onclick="openNanoBanana()">🍌 Nano Banana 2</button>
+        <button class="pbtn prim" onclick="openPreview()" id="btnOpen"></button>
+        <button class="pbtn prim" onclick="dl()" id="btnDl"></button>
+      </div>
+    </div>
+    <div class="preview-body" id="previewBody"></div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+let lang = 'en', fmt = 'flyer', quality = 'premium';
+let generatedHTML = '', lastPrompt = '', lastNBPrompt = '';
+
+const WELTRADE_LOGO = `data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAB0AJQDASIAAhEBAxEB/8QAHAABAQEBAQEBAQEAAAAAAAAAAAcIBgUCBAED/8QARhAAAQMDAgIECQgHBwUAAAAAAQACAwQFEQYHEiEIMUFRExciN1RhcYGUFDJCUoSRtNEWI1ZydaGyFSUzNIKTsWKSosHh/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAMFBAYHAQL/xAA6EQABAwIBCAQNBAMAAAAAAAABAAIDBBEFBhIhMUFRcZEUIlJhExUjMjM1U3KBobLB0RY0Q/BUsdL/2gAMAwEAAhEDEQA/ANloiIiIiIiIiIiIi8XVGq9OaYhEt9vFLQ8Q4mse7MjxnGWsGXO9wKkjifK4MjBJOwaSvC4NFyvaRTKbfPb5jsNra2UY620j8fzwvjx7aA9IuHwh/NWIwLEj/A7kVD0mHtBVBFL/AB7aA9IuHwh/NPHtoD0i4fCH8174ixL2DuRTpMPaCqCKX+PbQHpFw+EP5p49tAekXD4Q/mniLEvYO5FOkw9oKoIpg3fXb8uANVXtBPWaR2Aut0vrjSep5PA2O+UtXNgu8DzjlIGcngeA7HLu7u8KCfCq2nbnyxOA3kGy+mzRuNg4LokRFgKVERERERERERERERERT7e3cAaH0+1tGGSXatDmUwLm/quXOQtPMgdnLBPWsk3SvrbpcJrhcaqWqqp3cUssrsucfaqN0m7nNW7pVNE97zFb6eGGNpPIcTBISPbx+3l6gpguyZLYZFSULJQOu8Ak9x0gclQVsxkkI2BERFsyw0RERF0ugdD6g1tcH0tlp2cEQzPUzO4Yos9XEcE5PYACfVgErr9X7G6qsNmkukFTR3RkDOOaKnDxK0dpaCPKA9ufUrrthaKHRG1lK6XDQykNwrpOQy8s43nOccgA0HlyaF+nafV0mttKuvUtNHTO+VSQ+DYScBpBbnPbgjK5vW5VV3hnzU7R4FjgOOv/AHbZq0K2joos0Nf5xCxavqJ74pGyxPcx7CHNc04LSOog9693cehbbdf3+iYwMjiuEwjaBgBheS3ly7CF4C6HFIJY2vGogHmqpwzSQtT9H/cqbVtJJY7y4G70cQe2bP8AmYwccRH1hkZ78571WVjHZKumoN1LBLD1yVQgcM8i2QFh/k7PuWzlyLKzDYqGt8kLNeL23Hb+VfUMxkj62sIiItXWYiIiIiIiIiIiIsf9Inzx337P+HiU/VA6RPnjvv2f8PEp+u8YP6vg9xv0hazUeldxKIiKyUSIiIi2rr3NbtReDbwC2azyGIMkyC0xE8ndox96m3RIvLJLNeLA9+JIJ21cbS7ra9oa7A9RY3P7wXXdH3UkOo9uaallfx1dtHyOoa85JaB5B9hbge0FROKoqNo97Zi4ONAyYtkbGP8AEpJeYwO0tGDj6zFyygoXSQVmFkeUBzm99vzo5q6lks6ObZqX30mrE61bkyXBjSKe6wtqGnhwA8Dge3PafJDj++pctk7r6Rpdf6IMVI6J9WxoqbdPkYLi3kOL6rgcfcexY6qYJqaplpqiN0U0TyyRjhgtcDgg+9bZkribayiER8+PQR3bDy+YWDWwmOTO2FdJtL5zdOfxGH+oLbCxPtL5zdOfxGH+oLbC1bLv91F7v3WbhnmO4qB747/XbbXXcmnDpGCtgNNHUU9Q+sMZlY4EE8IaepzXt9yKt6l0Zp7UVeytu1BBUTsiETXPhjeQ0EkDLmk9bii0VWS6FEREREREREREWP8ApE+eO+/Z/wAPEp+qB0ifPHffs/4eJT9d4wf1fB7jfpC1mo9K7iURFrHaXbXT+lNNQXW701JU3R8InqamoGY4BnjHCHDDOEYy7ryD2clDjOMw4VEHvBJdoAG1fVPTundYLJyLaH6a7cftDp//AHo0/TXbj9odP/70a1/9X1H+G7mf+VldAZ7Qf34qB9GXUjrNr8WmR7W0l4Z4F/EcYkaHOjP38Tcf9a7jpY6bimtVv1VFynp3ijmGD5UbuJzT6sO4v+5UVut9umuDm6isDXA5BE0YIKjvSF3PtWobXDpvTdQaqldI2arqQwta7HzYxxAE8/KJ9Q9arqaaqxDGo6qKB0ex172txsNmj4BTPayKnLHOvuX7+jNuC4Pbom7zZacutsr3dXaYf+S33juAdJ7QTWY1raqfHERHcmMHb1Nmx/4u/wBJx1lQWmnmpqmKpp5HRTRPD43tOC1wOQR71s/RN5oNwtuoamqjZIytp3U1dCPovxwvb6u8eohZWOQuwWvZiUA6rjZw/u/XxF18UzhURGF2sallTaXzm6c/iMP9QW2Fj3S1kqNN7622x1Idx0d4jjDnDBeziBY//U0h3vWwlV5byNknhe03Bbcc1NhwIa4HeiIi0hWKIiIiIiIiIiIix/0ifPHffs/4eJT9UDpE+eO+/Z/w8Sn67xg/q+D3G/SFrNR6V3Eotpat/vjaC5SRFrPlVkfK3lyGYeIewe73LFq2htXIy67S2JvFlr7YynJc36rfBnl2/N961nLXybaefsu/B+yzMO0lzd4WL0X3PG6GeSFxBcxxacdWQcL4W7g3VciIi9RFXejNrKOxamlsFwnEdDdCBEXHyWVA5N9nEPJ9oapEv61zmuDmuLXA5BBwQVhYhQx11M+nk1O+R2H4KSKQxPDgtebg6EddNdaa1fbY2fKqCsibWtzgyQh4IcOwluT7QfUAqGpPsLucNWUYsV5e1t6po/JkLgPlbB9ID647R29feBWFxfFWVVO9tLU64xYcCbj4buS2GAseC9m1ERFVKZERERERERERERZM6TNvlo91auqeDwV1PDMw88YDBGR1d7PX1qZLYO9m37ddafjFI9kV1oi59K93zXgjyo3HsBwOfYR7Vka5UVXba+egr6eSmqoHlksUgw5rh2FdkyWxOKsoWRA9dgAI7hoB4WVBWwmOQnYV+daw6MVxZWbWQUrXeVQVU0Dh3Zd4Qe79Z/ysnrQXRDuIMV/tLn8w6KpjbxDt4muOOvsZ/L3/ABljB4XC3O7JB+33XtA7NmA3qQ7o242rcS/0JGAyulewcvmOdxN6vU4f/FzaqnSit/yPc91UOquoopicdozHj1nDB94UrVzhM/SKGKXe0c7afmsedubI4d6IiKwUSIi/0poJ6mdlPTQyTTSHhZHG0uc49wA5leE20lF1+yNDNX7p2GOGJ7/BVInfw/RawFxJ9XL/ANdZWzVJ+j/ttLpOgkvV7hj/ALXrGNDIy0F1LHzy3P1nZGe7AHeqwuO5WYlHXV3kjdrBa+87fwr+hhMcfW1lERFrCzEREREREREREREXi6n0ppzU0bWX2z0tcWAtY97cSMB6wHjDgOfYevmvaRSRyvicHxkgjaNBXhaHCxUyn2M2+klc9lFWxNJ5MZVvIb7M5P3le5ofbfTOjbpNcbJHVsnmhMD/AAs5e0tLg7q78tHP2rsUWbLi9dMwxySuLTsJKjbBG03DQuT13t9pzWlTS1F8iqHvpmOZGYpeDkTk5x19S5vxE6A9HuHxZ/JVBEhxeugYI4pXBo2Ao6CNxuWi6l/iJ0B6PcPiz+SeInQHo9w+LP5KoIpfHuJe3dzK+ejQ9kKYx7F7fseHOo66QD6Lqt2D92Cur0pobSmliH2Sy01PPgjw7gZJufWON2XAHuBwujRQT4rW1DcyWVxG4k2X02GNpuGhERFgKVERERERERERERERERERERERERERERERERERERERERERERf/2Q==`;
+
+// ── TRANSLATIONS ────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    badge:'🔒 Weltrade branding enforced',
+    sysMsg:'🔒 Weltrade branding is mandatory on all materials',
+    welcome:"✦ Ready. Describe your Weltrade marketing material — I'll generate a professional flyer, banner, or social post.",
+    placeholder:'e.g. 100% deposit bonus flyer, dark luxury theme, Arabic market...',
+    thinking:'⏳ Generating your design...',
+    done:'✦ Design ready! Click "Open Preview" to view it full-size in a new tab.',
+    error:'Connection error. Please try again.',
+    noKey:'⚠️ Please enter your Anthropic API key in settings first.',
+    gen1:'Crafting visual layout...', gen2:'Rendering premium design...', gen3:'Injecting Weltrade branding...',
+    lChat:'IB Request', lQuick:'Quick Templates', lSettings:'Settings',
+    lApi:'Anthropic API Key', lIb:'IB Code', lLang:'Material language',
+    lFmt:'Format', lQual:'Visual quality', lRules:'Branding Rules',
+    r1:'<span class="r-red">Required:</span> Weltrade logo on every material',
+    r2:'<span class="r-red">Required:</span> IB code must be visible',
+    r3:'<span class="r-grn">Allowed:</span> Custom colors, themes, layouts',
+    r4:'<span class="r-prp">Injected:</span> Branding footer added automatically',
+    btnRegen:'↺ Regenerate', btnOpen:'⤢ Open Preview', btnDl:'↓ Download HTML',
+    readyTitle:'Design Ready!',
+    readyHint:'Click the button below — your design will open full-size in a new tab. No iframe, no restrictions.',
+    openBtn:'⤢ Open Full Preview',
+    dlBtn:'↓ Download HTML',
+    qualNote: q => q==='ultra'?'💎 Ultra quality — may take ~15s':q==='premium'?'✦ Premium — generating...':'⚡ Standard — generating...',
+    emptyTitle:'Awaiting request',
+    emptySub:'Describe your material or pick a quick template.',
+    tip1:'Mention the market (Asia, LatAm, MENA) for culturally-tuned designs',
+    tip2:'Specify a theme: dark luxury, neon fintech, bold energy',
+    tip3:'Include the offer: "100% bonus", "up to $500 cashback"'
+  },
+  es: {
+    badge:'🔒 Branding Weltrade obligatorio',
+    sysMsg:'🔒 El branding de Weltrade es obligatorio en todos los materiales',
+    welcome:'✦ Listo. Describe tu material de marketing para Weltrade — generaré un flyer, banner o publicación social profesional.',
+    placeholder:'ej. Flyer bono 100% depósito, tema oscuro lujoso, mercado árabe...',
+    thinking:'⏳ Generando tu diseño...',
+    done:'✦ ¡Diseño listo! Haz clic en "Abrir Vista Previa" para verlo en tamaño completo.',
+    error:'Error de conexión. Intenta de nuevo.',
+    noKey:'⚠️ Por favor ingresa tu clave API de Anthropic primero.',
+    gen1:'Diseñando estructura visual...', gen2:'Renderizando diseño premium...', gen3:'Inyectando branding Weltrade...',
+    lChat:'Solicitud IB', lQuick:'Plantillas Rápidas', lSettings:'Configuración',
+    lApi:'Clave API Anthropic', lIb:'Código IB', lLang:'Idioma del material',
+    lFmt:'Formato', lQual:'Calidad visual', lRules:'Reglas de Branding',
+    r1:'<span class="r-red">Obligatorio:</span> Logo Weltrade en cada material',
+    r2:'<span class="r-red">Obligatorio:</span> Código IB debe ser visible',
+    r3:'<span class="r-grn">Permitido:</span> Colores, temas y diseños personalizados',
+    r4:'<span class="r-prp">Inyectado:</span> Footer de branding añadido automáticamente',
+    btnRegen:'↺ Regenerar', btnOpen:'⤢ Abrir Vista Previa', btnDl:'↓ Descargar HTML',
+    readyTitle:'¡Diseño Listo!',
+    readyHint:'Haz clic abajo — tu diseño se abrirá en tamaño completo en una nueva pestaña.',
+    openBtn:'⤢ Abrir Vista Previa Completa',
+    dlBtn:'↓ Descargar HTML',
+    qualNote: q => q==='ultra'?'💎 Calidad Ultra — puede tomar ~15s':q==='premium'?'✦ Premium — generando...':'⚡ Estándar — generando...',
+    emptyTitle:'Esperando solicitud',
+    emptySub:'Describe tu material o elige una plantilla.',
+    tip1:'Menciona el mercado (Asia, LatAm, MENA) para diseños adaptados',
+    tip2:'Especifica un tema: lujo oscuro, neon fintech, energía audaz',
+    tip3:'Incluye la oferta: "100% bono", "hasta $500 cashback"'
+  }
+};
+
+const QUICK = {
+  en:[
+    {icon:'💰',text:'100% first deposit bonus flyer — dark luxury theme, Middle East market'},
+    {icon:'🤝',text:'IB partner program invitation — high commission focus, professional fintech style'},
+    {icon:'📈',text:'Copy trading promo flyer — modern gradient, LatAm market, Spanish copy'},
+    {icon:'💎',text:'SyntX synthetic indices — neon futuristic theme, Asian market'},
+    {icon:'🎁',text:'Welcome bonus campaign banner — bold colorful, global audience'}
+  ],
+  es:[
+    {icon:'💰',text:'Flyer bono 100% primer depósito — tema oscuro lujoso, mercado Oriente Medio'},
+    {icon:'🤝',text:'Invitación programa IB — alta comisión, estilo fintech profesional'},
+    {icon:'📈',text:'Promo copy trading — degradado moderno, mercado LatAm'},
+    {icon:'💎',text:'Índices sintéticos SyntX — tema neón futurista, mercado asiático'},
+    {icon:'🎁',text:'Banner campaña bono bienvenida — colores audaces, audiencia global'}
+  ]
+};
+
+// ── SYSTEM PROMPT ───────────────────────────────────────────────────────────
+function getSystemPrompt(ibCode, matLang) {
+  const sizes = {flyer:'800×1050px portrait (A4-style)',banner:'1200×400px horizontal leaderboard',social:'1080×1080px square social post',email:'600px wide email'};
+  const qDesc = {
+    standard:'Clean layout, solid colors, clear typography hierarchy.',
+    premium:'Rich gradients, glassmorphism panels, glowing elements, multi-layer backgrounds, premium typography.',
+    ultra:'World-class agency quality. Complex layered backgrounds, mesh gradients + noise texture, glassmorphism with backdrop-filter blur, animated glow pulses (@keyframes), metallic/holographic text, 3D perspective transforms, cinematic color grading.'
+  };
+  return `You are an elite AI creative director generating premium financial marketing HTML for Weltrade (international forex/CFD broker).
+
+TASK: Generate ONE complete self-contained HTML file. Return ONLY raw HTML. Start immediately with <!DOCTYPE html>. No markdown, no code fences, no explanation, nothing before <!DOCTYPE html>.
+
+FORMAT: ${fmt} — ${sizes[fmt]}
+LANGUAGE: ${matLang}
+QUALITY: ${qDesc[quality]}
+
+═══ CRITICAL: BACKGROUND ═══
+• <body> MUST have explicit dark background color. Example: <body style="margin:0;padding:0;background:#050a1f;min-height:100vh;">
+• NEVER white, never transparent, ALWAYS a rich dark color
+• Options: deep navy #050a1f, midnight #0c0c18, dark purple #0a0614, dark blue-black #040c1e
+• Add visual depth: radial glow div, noise overlay (SVG feTurbulence), diagonal lines at low opacity
+
+═══ MANDATORY DECORATIVE ELEMENT ═══
+You MUST include at least ONE visible large decorative element (150px or larger):
+• Option A: Oversized emoji <span style="font-size:140px;...">💰</span> or 📈 🚀 💎 🌍 ⚡
+• Option B: CSS circle/orb with glow: <div style="width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(91,79,234,0.6),transparent);box-shadow:0 0 80px rgba(91,79,234,0.4);..."></div>
+• Option C: Inline SVG chart, globe, or abstract shape (min 150px)
+
+═══ MANDATORY WELTRADE ELEMENTS ═══
+
+1. LOGO (top-left):
+<img src="data:image/png;base64,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" alt="Weltrade" style="height:34px;width:auto;">
+
+2. IB CODE BOX (prominent):
+<div style="background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 16px;display:inline-block;backdrop-filter:blur(10px);">
+  <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px;">IB Code</div>
+  <div style="font-size:20px;font-weight:700;color:#fff;font-family:monospace;letter-spacing:0.05em;">${ibCode}</div>
+</div>
+
+3. "weltrade.com" visible in footer
+4. Small disclaimer: "CFDs are complex instruments. High risk of losing money."
+
+═══ DESIGN ═══
+• Import ONE Google Font: 'Bebas Neue', 'Anton', 'Barlow Condensed', 'Playfair Display', or 'Oswald'
+• Headline: 52-80px bold
+• Key offer number (e.g. "100%"): 90-130px with glow or metallic text effect
+• Glassmorphism: background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12)
+• CTA button: glowing, prominent, clickable-looking
+
+═══ OUTPUT FORMAT ═══
+• First character: <
+• Last characters: </html>
+• Zero text outside HTML tags`;
+}
+
+// ── BRANDING INJECTION ──────────────────────────────────────────────────────
+function injectBranding(html, ibCode) {
+  const footer = `<div style="position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,rgba(4,8,25,0.97),rgba(8,18,45,0.97));padding:8px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(91,79,234,0.3);z-index:99999;font-family:-apple-system,sans-serif;backdrop-filter:blur(12px);"><img src="${WELTRADE_LOGO}" alt="Weltrade" style="height:24px;width:auto;"><span style="color:#3a3860;font-size:10px;">weltrade.com</span><span style="color:#5b4fea;font-size:10px;background:rgba(91,79,234,0.12);padding:3px 10px;border-radius:12px;border:1px solid rgba(91,79,234,0.3);">${ibCode}</span></div><div style="height:46px;"></div>`;
+  return html.includes('</body>') ? html.replace('</body>', footer + '</body>') : html + footer;
+}
+
+// ── PREVIEW: open in new tab (THE ONLY RELIABLE APPROACH) ──────────────────
+function openPreview() {
+  if (!generatedHTML) return;
+  const win = window.open('', '_blank');
+  if (!win) {
+    alert('Popup blocked!\n\nPlease allow popups for this page in your browser settings, then click "Open Preview" again.');
+    return;
+  }
+  win.document.open();
+  win.document.write(generatedHTML);
+  win.document.close();
+}
+
+// ── DOWNLOAD ────────────────────────────────────────────────────────────────
+function dl() {
+  if (!generatedHTML) return;
+  const ibCode = document.getElementById('ibCode').value || 'IB-WL-0000';
+  const blob = new Blob([generatedHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `weltrade_${fmt}_${quality}_${ibCode}_${Date.now()}.html`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+// ── NANO BANANA ─────────────────────────────────────────────────────────────
+function openNanoBanana() {
+  if (!lastNBPrompt) return;
+  window.open(`https://nano-banana2.co/generate/models/nano-banana-2?prompt=${encodeURIComponent(lastNBPrompt)}`, '_blank');
+}
+function buildNBPrompt(txt) {
+  const ib = document.getElementById('ibCode').value || 'IB-WL-0000';
+  return `Professional forex/CFD broker marketing ${fmt} for Weltrade. ${txt}. Style: premium financial advertising, dark background with vivid color accents, metallic typography, modern fintech aesthetic. Include Weltrade logo, IB code ${ib}, compelling offer headline. 4K quality.`;
+}
+
+// ── UI STATES ────────────────────────────────────────────────────────────────
+function showEmpty() {
+  const t = T[lang];
+  document.getElementById('previewBody').innerHTML = `
+    <div class="state">
+      <div class="state-icon">✦</div>
+      <div class="state-title">${t.emptyTitle}</div>
+      <div class="state-sub">${t.emptySub}</div>
+      <div class="tips">
+        <div class="tip"><b>💡</b> ${t.tip1}</div>
+        <div class="tip"><b>💡</b> ${t.tip2}</div>
+        <div class="tip"><b>💡</b> ${t.tip3}</div>
+      </div>
+    </div>`;
+}
+
+function showGenerating() {
+  const t = T[lang];
+  document.getElementById('previewBody').innerHTML = `
+    <div class="state">
+      <div class="spinner"></div>
+      <div class="gen-steps">
+        <div class="gstep active" id="gs1">${t.gen1}</div>
+        <div class="gstep" id="gs2">${t.gen2}</div>
+        <div class="gstep" id="gs3">${t.gen3}</div>
+      </div>
+      <div class="gen-note">${t.qualNote(quality)}</div>
+    </div>`;
+  let s = 1;
+  const iv = setInterval(() => {
+    if (s >= 3) return clearInterval(iv);
+    const prev = document.getElementById(`gs${s}`);
+    if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+    s++;
+    const cur = document.getElementById(`gs${s}`);
+    if (cur) cur.classList.add('active');
+  }, 1300);
+}
+
+function showReady() {
+  const t = T[lang];
+  document.getElementById('previewBody').innerHTML = `
+    <div class="state">
+      <div class="state-icon" style="background:rgba(0,212,200,0.1);border-color:rgba(0,212,200,0.3);font-size:26px;">🎨</div>
+      <div class="state-title" style="color:var(--accent2);font-size:17px;">${t.readyTitle}</div>
+      <div class="state-sub" style="opacity:1;max-width:340px;">${t.readyHint}</div>
+      <div class="ready-btns">
+        <button class="rbtn rbtn-primary" onclick="openPreview()">⤢ ${t.openBtn}</button>
+        <button class="rbtn rbtn-sec" onclick="dl()">↓ ${t.dlBtn}</button>
+      </div>
+    </div>`;
+}
+
+// ── CHAT ─────────────────────────────────────────────────────────────────────
+function addMsg(txt, cls) {
+  const box = document.getElementById('chatBox');
+  const d = document.createElement('div');
+  d.className = `msg ${cls}`;
+  if (cls === 'mt') d.id = 'thinkMsg';
+  d.textContent = txt;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+function removeThinking() {
+  const el = document.getElementById('thinkMsg');
+  if (el) el.remove();
+}
+
+// ── SEND ─────────────────────────────────────────────────────────────────────
+async function send() {
+  const input = document.getElementById('msgInput');
+  const btn   = document.getElementById('sendBtn');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { addMsg(T[lang].noKey, 'mb'); return; }
+
+  lastPrompt   = text;
+  lastNBPrompt = buildNBPrompt(text);
+  input.value  = '';
+  btn.disabled = true;
+
+  addMsg(text, 'mu');
+  addMsg(T[lang].thinking, 'mt');
+  showGenerating();
+
+  const ibCode  = document.getElementById('ibCode').value || 'IB-WL-0000';
+  const matLang = document.getElementById('matLang').value;
+  const maxTok  = quality === 'ultra' ? 7000 : quality === 'premium' ? 5000 : 3500;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTok,
+        system: getSystemPrompt(ibCode, matLang),
+        messages: [{role:'user', content:`Create a ${fmt} for: ${text}`}]
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      removeThinking();
+      addMsg('❌ API Error: ' + (data.error?.message || `${res.status} ${res.statusText}`), 'mb');
+      showEmpty();
+      btn.disabled = false;
+      return;
+    }
+
+    let html = data.content?.[0]?.text || '';
+    removeThinking();
+
+    if (html) {
+      // Strip markdown fences if model added them
+      html = html.replace(/^[\s\S]*?```(?:html)?\s*\n/i, '').replace(/\n?```[\s\S]*$/, '').trim();
+      html = injectBranding(html, ibCode);
+      generatedHTML = html;
+      addMsg(T[lang].done, 'mb');
+      showReady();
+      document.getElementById('previewLbl').textContent = `— ${fmt} • ${quality}`;
+      document.getElementById('pActions').style.display = 'flex';
+    } else {
+      addMsg(T[lang].error, 'mb');
+      showEmpty();
+    }
+  } catch(e) {
+    removeThinking();
+    addMsg('❌ ' + (e.message.includes('fetch') ? 'Network error. Check your connection.' : e.message), 'mb');
+    showEmpty();
+  }
+
+  btn.disabled = false;
+}
+
+function regen() { if (lastPrompt) { document.getElementById('msgInput').value = lastPrompt; send(); } }
+function handleKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
+
+// ── CONTROLS ─────────────────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.textContent.includes(l.toUpperCase())));
+  applyLang();
+}
+function setFmt(el, f) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  fmt = f;
+}
+function setQuality(el, q) {
+  document.querySelectorAll('.qchip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  quality = q;
+}
+
+// ── APPLY LANG ───────────────────────────────────────────────────────────────
+function applyLang() {
+  const t = T[lang];
+  const set = (id, val, html=false) => { const el = document.getElementById(id); if(el) html ? el.innerHTML=val : el.textContent=val; };
+  set('badgeText', t.badge);
+  set('sysMsg', t.sysMsg);
+  set('welcomeMsg', t.welcome);
+  document.getElementById('msgInput').placeholder = t.placeholder;
+  set('lbl-chat', t.lChat); set('lbl-quick', t.lQuick); set('lbl-settings', t.lSettings);
+  set('lbl-api', t.lApi); set('lbl-ib', t.lIb); set('lbl-lang', t.lLang);
+  set('lbl-fmt', t.lFmt); set('lbl-qual', t.lQual); set('lbl-rules', t.lRules);
+  set('rule1', t.r1, true); set('rule2', t.r2, true); set('rule3', t.r3, true); set('rule4', t.r4, true);
+  set('btnRegen', t.btnRegen); set('btnOpen', t.btnOpen); set('btnDl', t.btnDl);
+
+  const ql = document.getElementById('quickList');
+  ql.innerHTML = '';
+  QUICK[lang].forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerHTML = `<span style="margin-right:5px;">${q.icon}</span>${q.text}`;
+    b.onclick = () => { document.getElementById('msgInput').value = q.text; send(); };
+    ql.appendChild(b);
+  });
+
+  if (!generatedHTML) showEmpty();
+}
+
+document.addEventListener('DOMContentLoaded', applyLang);
+</script>
+</body>
+</html>
