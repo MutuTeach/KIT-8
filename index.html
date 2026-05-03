@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IB Kit – AI Marketing Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --bg:      #060611;
+  --bg2:     #0b0b1c;
+  --bg3:     #101025;
+  --border:  #1a1a35;
+  --border2: #222245;
+  --text:    #e8e4ff;
+  --text2:   #7a75a0;
+  --text3:   #3a3860;
+  --accent:  #5b4fea;
+  --accent2: #00d4c8;
+  --gold:    #f5c842;
+  --red:     #ff6b6b;
+  --green:   #00d4c8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+
+/* TOPBAR */
+.topbar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,#5b4fea,#00d4c8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;box-shadow:0 0 16px rgba(91,79,234,0.5);}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-0.5px;}
+.logo-text span{color:var(--accent);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.badge{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent2);background:rgba(0,212,200,0.08);border:1px solid rgba(0,212,200,0.2);padding:3px 10px;border-radius:20px;}
+.lang-switch{display:flex;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:2px;gap:2px;}
+.lang-btn{padding:3px 10px;border-radius:5px;border:none;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--text3);font-family:inherit;transition:all 0.15s;}
+.lang-btn.on{background:var(--accent);color:#fff;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:290px 1fr;height:calc(100vh - 52px);}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sidebar-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px;}
+.sidebar-body::-webkit-scrollbar{width:3px;}
+.sidebar-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.s-lbl{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#6a65a0;margin-bottom:8px;}
+
+/* Chat */
+.chat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+.chat::-webkit-scrollbar{width:3px;}
+.msg{padding:7px 11px;border-radius:8px;font-size:12px;line-height:1.5;max-width:94%;}
+.mb{background:var(--bg3);color:var(--text2);align-self:flex-start;border:1px solid var(--border);}
+.mu{background:rgba(91,79,234,0.15);color:#b8b0ff;align-self:flex-end;border:1px solid rgba(91,79,234,0.25);}
+.ms{background:rgba(0,212,200,0.06);color:var(--accent2);font-size:10.5px;align-self:center;text-align:center;border:1px solid rgba(0,212,200,0.15);width:100%;max-width:100%;}
+.mt{color:var(--text3);font-style:italic;background:var(--bg3);border:1px solid var(--border);animation:pulse 1.4s infinite;}
+@keyframes pulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* Quick prompts */
+.quick-list{display:flex;flex-direction:column;gap:4px;}
+.qbtn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-size:11px;color:var(--text2);cursor:pointer;text-align:left;line-height:1.45;transition:all 0.15s;font-family:inherit;}
+.qbtn:hover{border-color:rgba(91,79,234,0.4);color:var(--text);background:var(--bg3);}
+
+/* Settings */
+.settings{display:flex;flex-direction:column;gap:10px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field-lbl{font-size:11px;font-weight:500;color:#8a85b8;}
+.field input,.field select{background:var(--bg);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;font-size:12.5px;color:#d8d4ff;outline:none;font-family:inherit;width:100%;transition:border-color 0.15s;}
+.field input:focus,.field select:focus{border-color:rgba(91,79,234,0.5);}
+.field input::placeholder{color:var(--text3);}
+
+/* Color pickers */
+.color-row{display:flex;gap:8px;}
+.color-field{flex:1;display:flex;flex-direction:column;gap:4px;}
+.color-field label{font-size:10px;color:#8a85b8;font-weight:500;}
+.color-wrap{position:relative;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;cursor:pointer;transition:border-color 0.15s;}
+.color-wrap:hover{border-color:rgba(91,79,234,0.5);}
+.color-wrap input[type=color]{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;left:0;top:0;}
+.color-swatch{width:18px;height:18px;border-radius:4px;flex-shrink:0;border:1px solid rgba(255,255,255,0.1);}
+.color-hex{font-size:11px;font-family:'JetBrains Mono',monospace;color:#c0baff;}
+
+/* Broker logo upload */
+.logo-upload-area{border:1px dashed var(--border2);border-radius:7px;padding:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.15s;}
+.logo-upload-area:hover{border-color:rgba(91,79,234,0.5);}
+.logo-preview{width:36px;height:36px;object-fit:contain;border-radius:4px;background:var(--bg3);border:1px solid var(--border);}
+.logo-placeholder{width:36px;height:36px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.logo-upload-info{flex:1;}
+.logo-upload-title{font-size:11px;color:var(--text2);}
+.logo-upload-sub{font-size:10px;color:var(--text3);}
+#logoFileInput{display:none;}
+
+/* Chips */
+.chips{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 13px;font-size:11px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:500;font-family:inherit;}
+.chip.on{border-color:rgba(91,79,234,0.6);color:#9b91ff;background:rgba(91,79,234,0.1);}
+.chip:hover:not(.on){border-color:var(--border2);color:var(--text2);}
+.qchips{display:flex;gap:5px;}
+.qchip{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 4px;font-size:10.5px;color:var(--text3);cursor:pointer;transition:all 0.15s;font-weight:500;text-align:center;font-family:inherit;}
+.qchip .qi{display:block;font-size:13px;margin-bottom:2px;}
+.qchip.on{border-color:rgba(245,200,66,0.5);color:var(--gold);background:rgba(245,200,66,0.08);}
+.qchip:hover:not(.on){border-color:var(--border2);color:var(--text2);}
+
+/* Rules */
+.rules{background:var(--bg);border:1px solid rgba(0,212,200,0.1);border-radius:10px;padding:11px;display:flex;flex-direction:column;gap:7px;}
+.rule{display:flex;align-items:flex-start;gap:8px;}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.dot-r{background:var(--red);}
+.dot-g{background:var(--green);}
+.dot-p{background:var(--accent);}
+.rule-txt{font-size:11px;color:#5a8a85;line-height:1.45;}
+.r-red{color:var(--red);font-weight:500;}
+.r-grn{color:var(--green);font-weight:500;}
+.r-prp{color:#9b91ff;font-weight:500;}
+
+/* Input area */
+.input-area{padding:10px 14px 12px;border-top:1px solid var(--border);background:var(--bg2);display:flex;gap:7px;align-items:flex-end;}
+.input-wrap{flex:1;display:flex;flex-direction:column;gap:5px;}
+.main-input{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-size:12.5px;color:var(--text);outline:none;font-family:inherit;resize:none;min-height:40px;max-height:100px;transition:border-color 0.15s;}
+.main-input:focus{border-color:rgba(91,79,234,0.5);}
+.main-input::placeholder{color:var(--text3);}
+.clear-btn{background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;font-family:inherit;align-self:flex-end;padding:0;transition:color 0.15s;}
+.clear-btn:hover{color:var(--text2);}
+.send-btn{width:40px;height:40px;border-radius:8px;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;box-shadow:0 2px 12px rgba(91,79,234,0.4);}
+.send-btn:hover{background:#6b5ffa;transform:translateY(-1px);}
+.send-btn:active{transform:scale(0.95);}
+.send-btn:disabled{background:var(--border2);cursor:not-allowed;box-shadow:none;transform:none;}
+.send-btn svg{width:15px;height:15px;fill:#fff;}
+
+/* PREVIEW PANE */
+.preview{background:#080818;display:flex;flex-direction:column;overflow:hidden;}
+.preview-top{height:50px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
+.preview-lbl{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.pactions{display:flex;gap:7px;}
+.pbtn{background:var(--bg2);border:1px solid var(--border2);border-radius:7px;padding:5px 14px;font-size:11.5px;color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.pbtn:hover{color:var(--text);background:var(--bg3);}
+.pbtn.prim{background:rgba(91,79,234,0.12);border-color:rgba(91,79,234,0.4);color:#9b91ff;}
+.pbtn.prim:hover{background:rgba(91,79,234,0.22);}
+
+.preview-body{flex:1;overflow:auto;padding:0;display:flex;align-items:stretch;justify-content:stretch;position:relative;}
+.preview-body::-webkit-scrollbar{width:4px;}
+.preview-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* Iframe preview */
+#previewFrame{position:absolute;inset:0;width:100%;height:100%;border:none;background:#fff;display:none;}
+#previewFrame.visible{display:block;}
+
+/* States */
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;min-height:340px;width:100%;padding:24px;}
+.state-icon{width:56px;height:56px;background:#1a1a3a;border:1px solid #2e2e60;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.state-title{font-size:16px;font-weight:600;color:#c0baff;}
+.state-sub{font-size:13px;color:#9090c0;max-width:300px;line-height:1.6;}
+.tips{display:flex;flex-direction:column;gap:6px;max-width:340px;margin-top:4px;}
+.tip{font-size:12px;color:#a0a0c8;background:#12122a;border:1px solid #252550;border-radius:8px;padding:9px 14px;text-align:left;}
+.tip b{color:var(--accent2);font-weight:500;}
+
+.spinner{width:34px;height:34px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.gen-steps{display:flex;flex-direction:column;gap:7px;align-items:center;}
+.gstep{font-size:12px;color:var(--text3);transition:color 0.3s;}
+.gstep.active{color:var(--accent);}
+.gstep.done{color:var(--accent2);}
+.gstep.done::before{content:'✓ ';}
+.gen-note{font-size:11px;color:var(--text3);opacity:0.6;text-align:center;max-width:200px;line-height:1.5;}
+
+.ready-btns{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+.rbtn{border:none;border-radius:8px;padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.rbtn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 16px rgba(91,79,234,0.5);}
+.rbtn-primary:hover{background:#6b5ffa;transform:translateY(-1px);}
+.rbtn-sec{background:var(--bg2);color:var(--text2);border:1px solid var(--border2);}
+.rbtn-sec:hover{color:var(--text);border-color:var(--border);}
+
+hr.sep{height:1px;background:var(--border);border:none;margin:2px 0;}
+
+/* Refine bar — shown when design is ready */
+.refine-bar{display:none;padding:8px 14px;background:rgba(0,212,200,0.04);border-top:1px solid rgba(0,212,200,0.12);font-size:11px;color:var(--accent2);}
+.refine-bar.visible{display:flex;align-items:center;gap:8px;}
+.refine-bar span{opacity:0.7;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">IB</div>
+    <div class="logo-text">IB <span>Kit</span></div>
+  </div>
+  <div class="topbar-right">
+    <span class="badge" id="badgeText"></span>
+    <div class="lang-switch">
+      <button class="lang-btn on" data-lang="en" onclick="setLang('en')">🇬🇧 EN</button>
+      <button class="lang-btn" data-lang="es" onclick="setLang('es')">🇪🇸 ES</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-body">
+
+      <div>
+        <div class="s-lbl" id="lbl-chat"></div>
+        <div class="chat" id="chatBox">
+          <div class="msg ms" id="sysMsg"></div>
+          <div class="msg mb" id="welcomeMsg"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="s-lbl" id="lbl-quick"></div>
+        <div class="quick-list" id="quickList"></div>
+      </div>
+
+      <hr class="sep">
+
+      <div>
+        <div class="s-lbl" id="lbl-settings"></div>
+        <div class="settings">
+          <div class="field">
+            <span class="field-lbl" id="lbl-api"></span>
+            <input type="password" id="apiKey" placeholder="sk-ant-..." oninput="saveSettings()">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-broker"></span>
+            <input type="text" id="brokerName" placeholder="e.g. FX Academy, TradeHub, ProIB" oninput="saveSettings()">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-brokerurl"></span>
+            <input type="text" id="brokerUrl" placeholder="yoursite.com / t.me/yourgroup" oninput="saveSettings()">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-logo"></span>
+            <div class="logo-upload-area" onclick="document.getElementById('logoFileInput').click()" title="Click to upload">
+              <div class="logo-placeholder" id="logoPlaceholder">🏦</div>
+              <img id="logoPreviewImg" class="logo-preview" style="display:none;" alt="Broker logo">
+              <div class="logo-upload-info">
+                <div class="logo-upload-title" id="lbl-logo-title"></div>
+                <div class="logo-upload-sub" id="lbl-logo-sub"></div>
+              </div>
+              <button id="logoRemoveBtn" onclick="event.stopPropagation();removeLogo();" style="display:none;background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.35);border-radius:5px;color:#ff6b6b;font-size:11px;padding:3px 8px;cursor:pointer;flex-shrink:0;font-family:inherit;">✕</button>
+            </div>
+            <input type="file" id="logoFileInput" accept="image/*" onchange="handleLogoUpload(event)">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-ib"></span>
+            <input type="text" id="ibCode" placeholder="IB-0000" oninput="saveSettings()">
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-lang"></span>
+            <select id="matLang" onchange="saveSettings()">
+              <option value="English">English</option>
+              <option value="Spanish">Spanish</option>
+              <option value="Turkish">Turkish</option>
+              <option value="Arabic">Arabic</option>
+              <option value="Portuguese">Portuguese</option>
+              <option value="Indonesian">Indonesian</option>
+              <option value="Thai">Thai</option>
+              <option value="Vietnamese">Vietnamese</option>
+              <option value="Chinese">Chinese</option>
+            </select>
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-colors"></span>
+            <div class="color-row">
+              <div class="color-field">
+                <label id="lbl-color-primary"></label>
+                <div class="color-wrap">
+                  <input type="color" id="colorPrimary" value="#5b4fea" oninput="updateSwatch('colorPrimary','swatchPrimary','hexPrimary');saveSettings()">
+                  <div class="color-swatch" id="swatchPrimary" style="background:#5b4fea;"></div>
+                  <span class="color-hex" id="hexPrimary">#5b4fea</span>
+                </div>
+              </div>
+              <div class="color-field">
+                <label id="lbl-color-accent"></label>
+                <div class="color-wrap">
+                  <input type="color" id="colorAccent" value="#00d4c8" oninput="updateSwatch('colorAccent','swatchAccent','hexAccent');saveSettings()">
+                  <div class="color-swatch" id="swatchAccent" style="background:#00d4c8;"></div>
+                  <span class="color-hex" id="hexAccent">#00d4c8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+            <div class="field">
+            <span class="field-lbl" id="lbl-fmt"></span>
+            <div class="chips">
+              <button class="chip on" data-fmt="flyer" onclick="setFmt(this,'flyer')">Flyer</button>
+              <button class="chip" data-fmt="banner" onclick="setFmt(this,'banner')">Banner</button>
+              <button class="chip" data-fmt="social" onclick="setFmt(this,'social')">Social</button>
+              <button class="chip" data-fmt="email" onclick="setFmt(this,'email')">Email</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-lbl" id="lbl-qual"></span>
+            <div class="qchips">
+              <button class="qchip" data-quality="standard" onclick="setQuality(this,'standard')"><span class="qi">⚡</span>Fast</button>
+              <button class="qchip on" data-quality="premium" onclick="setQuality(this,'premium')"><span class="qi">✦</span>Premium</button>
+              <button class="qchip" data-quality="ultra" onclick="setQuality(this,'ultra')"><span class="qi">💎</span>Ultra</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="sep">
+
+      <div>
+        <div class="s-lbl" id="lbl-rules"></div>
+        <div class="rules">
+          <div class="rule"><span class="dot dot-r"></span><span class="rule-txt" id="rule1"></span></div>
+          <div class="rule"><span class="dot dot-r"></span><span class="rule-txt" id="rule2"></span></div>
+          <div class="rule"><span class="dot dot-g"></span><span class="rule-txt" id="rule3"></span></div>
+          <div class="rule"><span class="dot dot-p"></span><span class="rule-txt" id="rule4"></span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="refine-bar" id="refineBar">
+      <span id="refineHint"></span>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea class="main-input" id="msgInput" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)" placeholder=""></textarea>
+        <button class="clear-btn" id="clearHistBtn" onclick="clearConversation()" style="display:none"></button>
+      </div>
+      <button class="send-btn" id="sendBtn" onclick="send()">
+        <svg viewBox="0 0 24 24"><path d="M2 12L22 2L12 22L10 14L2 12Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="preview">
+    <div class="preview-top">
+      <span class="preview-lbl" id="previewLbl">— preview</span>
+      <div class="pactions" id="pActions" style="display:none;">
+        <button class="pbtn" onclick="regen()" id="btnRegen"></button>
+        <button class="pbtn" onclick="copyHTML()" id="btnCopy"></button>
+        <button class="pbtn prim" onclick="openFull()" id="btnOpen"></button>
+        <button class="pbtn prim" onclick="dlPNG()" id="btnPng"></button>
+        <button class="pbtn prim" onclick="dl()" id="btnDl"></button>
+      </div>
+    </div>
+    <div class="preview-body" id="previewBody">
+      <div class="state" id="stateEl">
+        <div class="state-icon">✦</div>
+        <div class="state-title" id="emptyTitle"></div>
+        <div class="state-sub" id="emptySub"></div>
+        <div class="tips">
+          <div class="tip"><b>💡</b> <span id="tip1"></span></div>
+          <div class="tip"><b>💡</b> <span id="tip2"></span></div>
+          <div class="tip"><b>💡</b> <span id="tip3"></span></div>
+        </div>
+      </div>
+      <iframe id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+
+</div>
+
+<script>
+// ── STORAGE SCHEMA VERSION ───────────────────────────────────────────────────
+const STORAGE_KEY = 'ibkit_v2';
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let lang = 'en', fmt = 'flyer', quality = 'premium';
+let generatedHTML = '';
+let conversationHistory = []; // multi-turn
+let brokerLogoBase64 = ''; // stored as data URL
+
+// ── PERSISTENCE ──────────────────────────────────────────────────────────────
+function saveSettings() {
+  const data = {
+    apiKey: document.getElementById('apiKey').value,
+    brokerName: document.getElementById('brokerName').value,
+    brokerUrl: document.getElementById('brokerUrl').value,
+    ibCode: document.getElementById('ibCode').value,
+    matLang: document.getElementById('matLang').value,
+    colorPrimary: document.getElementById('colorPrimary').value,
+    colorAccent: document.getElementById('colorAccent').value,
+    fmt, quality, lang,
+    brokerLogoBase64
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.apiKey) document.getElementById('apiKey').value = d.apiKey;
+    if (d.brokerName) document.getElementById('brokerName').value = d.brokerName;
+    if (d.brokerUrl) document.getElementById('brokerUrl').value = d.brokerUrl;
+    if (d.ibCode) document.getElementById('ibCode').value = d.ibCode;
+    if (d.matLang) document.getElementById('matLang').value = d.matLang;
+    if (d.fmt) { fmt = d.fmt; document.querySelectorAll('.chip').forEach(c => { c.classList.toggle('on', c.dataset.fmt === fmt); }); }
+    if (d.quality) { quality = d.quality; document.querySelectorAll('.qchip').forEach(c => { c.classList.toggle('on', c.dataset.quality === quality); }); }
+    if (d.lang) { lang = d.lang; document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.dataset.lang === lang)); }
+    if (d.colorPrimary) { document.getElementById('colorPrimary').value = d.colorPrimary; updateSwatch('colorPrimary','swatchPrimary','hexPrimary'); }
+    if (d.colorAccent)  { document.getElementById('colorAccent').value  = d.colorAccent;  updateSwatch('colorAccent','swatchAccent','hexAccent'); }
+    if (d.brokerLogoBase64) { brokerLogoBase64 = d.brokerLogoBase64; showLogoPreview(d.brokerLogoBase64); }
+  } catch(e) {}
+}
+
+// ── COLOR SWATCH ─────────────────────────────────────────────────────────────
+function updateSwatch(inputId, swatchId, hexId) {
+  const val = document.getElementById(inputId).value;
+  document.getElementById(swatchId).style.background = val;
+  document.getElementById(hexId).textContent = val;
+}
+
+// ── LOGO UPLOAD ───────────────────────────────────────────────────────────────
+function handleLogoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    brokerLogoBase64 = ev.target.result;
+    showLogoPreview(ev.target.result);
+    saveSettings();
+  };
+  reader.readAsDataURL(file);
+}
+
+function showLogoPreview(src) {
+  const img = document.getElementById('logoPreviewImg');
+  const ph  = document.getElementById('logoPlaceholder');
+  img.src = src;
+  img.style.display = 'block';
+  ph.style.display = 'none';
+  document.getElementById('logoRemoveBtn').style.display = 'block';
+  document.getElementById('lbl-logo-title').textContent = T[lang]?.logoUploaded || 'Logo ready ✓';
+  document.getElementById('lbl-logo-sub').textContent   = T[lang]?.logoRemove || 'Click ✕ to remove';
+}
+
+function removeLogo() {
+  brokerLogoBase64 = '';
+  const img = document.getElementById('logoPreviewImg');
+  const ph  = document.getElementById('logoPlaceholder');
+  img.src = ''; img.style.display = 'none';
+  ph.style.display = 'flex';
+  document.getElementById('logoRemoveBtn').style.display = 'none';
+  document.getElementById('logoFileInput').value = '';
+  document.getElementById('lbl-logo-title').textContent = T[lang]?.logoTitle || 'Click to upload logo';
+  document.getElementById('lbl-logo-sub').textContent   = T[lang]?.logoSub || 'PNG, JPG, SVG';
+  saveSettings();
+}
+
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    badge:'🎨 AI Marketing Studio',
+    sysMsg:'✦ Broker-agnostic. Works with any broker.',
+    welcome:"✦ Ready. Set your broker details in settings, then describe your marketing material.",
+    placeholder:'e.g. 100% deposit bonus flyer, dark luxury theme, Middle East market...',
+    refinePlaceholder:'Refine: e.g. make it red, bigger IB code, add countdown...',
+    thinking:'⏳ Generating your design...',
+    done:'✦ Design ready! Preview shown on the right.',
+    error:'Connection error. Please try again.',
+    noKey:'⚠️ Please enter your Anthropic API key in settings first.',
+    noBroker:'⚠️ Please enter a broker name in settings first.',
+    gen1:'Crafting visual layout...', gen2:'Rendering premium design...', gen3:'Injecting branding...',
+    lChat:'IB Request', lQuick:'Quick Templates', lSettings:'Settings',
+    lApi:'Anthropic API Key', lBroker:'Academy Name', lBrokerUrl:'IB Website',
+    lLogo:'Academy Logo', lIb:'IB Code', lLang:'Material language',
+    lFmt:'Format', lQual:'Visual quality', lRules:'Branding Rules',
+    lColors:'Brand Colors', lColorPrimary:'Primary', lColorAccent:'Accent',
+    logoUploaded:'Logo ready ✓',
+    logoTitle:'Click to upload logo',
+    logoSub:'PNG, JPG, SVG',
+    logoRemove:'Click to change • Right-click to remove',
+    r1:'<span class="r-red">Required:</span> Broker logo on every material',
+    r2:'<span class="r-red">Required:</span> IB code must be visible',
+    r3:'<span class="r-grn">Allowed:</span> Custom colors, themes, layouts',
+    r4:'<span class="r-prp">Injected:</span> Branding footer added automatically',
+    btnRegen:'↺ Regenerate', btnOpen:'⤢ Open Full', btnDl:'↓ Download HTML', btnCopy:'⎘ Copy HTML', btnPng:'⬇ PNG',
+    clearHist:'Clear conversation',
+    refineHint:'💬 Refine your design:',
+    qualNote: q => q==='ultra'?'💎 Ultra quality — may take ~15s':q==='premium'?'✦ Premium — generating...':'⚡ Standard — generating...',
+    emptyTitle:'Awaiting request',
+    emptySub:'Set your broker in settings, then describe your material.',
+    tip1:'Mention the market (Asia, LatAm, MENA) for culturally-tuned designs',
+    tip2:'Specify a theme: dark luxury, neon fintech, bold energy',
+    tip3:'Include the offer: "100% bonus", "up to $500 cashback"'
+  },
+  es: {
+    badge:'🎨 Estudio de Marketing IA',
+    sysMsg:'✦ Compatible con cualquier broker.',
+    welcome:'✦ Listo. Configura tu broker en ajustes, luego describe tu material.',
+    placeholder:'ej. Flyer bono 100% depósito, tema oscuro lujoso, mercado árabe...',
+    refinePlaceholder:'Refinar: ej. ponlo rojo, IB code más grande, agrega cuenta regresiva...',
+    thinking:'⏳ Generando tu diseño...',
+    done:'✦ ¡Diseño listo! Vista previa a la derecha.',
+    error:'Error de conexión. Intenta de nuevo.',
+    noKey:'⚠️ Por favor ingresa tu clave API de Anthropic primero.',
+    noBroker:'⚠️ Por favor ingresa el nombre del broker en ajustes.',
+    gen1:'Diseñando estructura visual...', gen2:'Renderizando diseño premium...', gen3:'Inyectando branding...',
+    lChat:'Solicitud IB', lQuick:'Plantillas Rápidas', lSettings:'Configuración',
+    lApi:'Clave API Anthropic', lBroker:'Nombre de la Academy', lBrokerUrl:'Sitio web IB',
+    lLogo:'Logo de la Academy', lIb:'Código IB', lLang:'Idioma del material',
+    lFmt:'Formato', lQual:'Calidad visual', lRules:'Reglas de Branding',
+    lColors:'Colores de Marca', lColorPrimary:'Primario', lColorAccent:'Acento',
+    logoUploaded:'Logo listo ✓',
+    logoTitle:'Clic para subir logo',
+    logoSub:'PNG, JPG, SVG',
+    logoRemove:'Clic para cambiar • Clic derecho para eliminar',
+    r1:'<span class="r-red">Obligatorio:</span> Logo del broker en cada material',
+    r2:'<span class="r-red">Obligatorio:</span> Código IB debe ser visible',
+    r3:'<span class="r-grn">Permitido:</span> Colores, temas y diseños personalizados',
+    r4:'<span class="r-prp">Inyectado:</span> Footer de branding añadido automáticamente',
+    btnRegen:'↺ Regenerar', btnOpen:'⤢ Abrir Completo', btnDl:'↓ Descargar HTML', btnCopy:'⎘ Copiar HTML', btnPng:'⬇ PNG',
+    clearHist:'Limpiar conversación',
+    refineHint:'💬 Refina tu diseño:',
+    qualNote: q => q==='ultra'?'💎 Calidad Ultra — ~15s':q==='premium'?'✦ Premium — generando...':'⚡ Estándar — generando...',
+    emptyTitle:'Esperando solicitud',
+    emptySub:'Configura tu broker en ajustes y describe tu material.',
+    tip1:'Menciona el mercado (Asia, LatAm, MENA) para diseños adaptados',
+    tip2:'Especifica un tema: lujo oscuro, neon fintech, energía audaz',
+    tip3:'Incluye la oferta: "100% bono", "hasta $500 cashback"'
+  }
+};
+
+const QUICK = {
+  en:[
+    {icon:'💰',text:'100% first deposit bonus flyer — dark luxury theme, Middle East market'},
+    {icon:'🤝',text:'IB partner program invitation — high commission focus, professional fintech style'},
+    {icon:'📈',text:'Copy trading promo flyer — modern gradient, LatAm market, Spanish copy'},
+    {icon:'💎',text:'Synthetic indices promo — neon futuristic theme, Asian market'},
+    {icon:'🎁',text:'Welcome bonus campaign banner — bold colorful, global audience'}
+  ],
+  es:[
+    {icon:'💰',text:'Flyer bono 100% primer depósito — tema oscuro lujoso, mercado Oriente Medio'},
+    {icon:'🤝',text:'Invitación programa IB — alta comisión, estilo fintech profesional'},
+    {icon:'📈',text:'Promo copy trading — degradado moderno, mercado LatAm'},
+    {icon:'💎',text:'Índices sintéticos — tema neón futurista, mercado asiático'},
+    {icon:'🎁',text:'Banner campaña bono bienvenida — colores audaces, audiencia global'}
+  ]
+};
+
+// ── SYSTEM PROMPT ─────────────────────────────────────────────────────────────
+function getSystemPrompt() {
+  const brokerName  = document.getElementById('brokerName').value.trim() || 'the broker';
+  const brokerUrl   = document.getElementById('brokerUrl').value.trim()  || 'broker.com';
+  const ibCode      = document.getElementById('ibCode').value.trim()     || 'IB-0000';
+  const matLang     = document.getElementById('matLang').value;
+  const hasLogo     = !!brokerLogoBase64;
+  const colorPrim   = document.getElementById('colorPrimary').value  || '#5b4fea';
+  const colorAccent = document.getElementById('colorAccent').value   || '#00d4c8';
+
+  const qDesc = {
+    standard:'Clean layout, solid colors, clear typography hierarchy. SVG icons throughout. No animations. Mobile responsive.',
+    premium:'Rich gradients, glassmorphism panels, glowing elements, multi-layer backgrounds, premium typography. SVG icons. Subtle CSS transitions (150-300ms). Mobile responsive with @media breakpoints.',
+    ultra:'World-class agency quality. Complex layered backgrounds, mesh gradients + noise texture, glassmorphism with backdrop-filter blur, animated glow pulses (@keyframes, transform/opacity only), metallic/holographic text, 3D perspective transforms, cinematic color grading. SVG icons everywhere. Full mobile responsive. prefers-reduced-motion respected.'
+  };
+
+  const logoInstruction = hasLogo
+    ? `<img src="${brokerLogoBase64}" alt="${brokerName}" style="height:34px;width:auto;">`
+    : `<div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-1px;">${brokerName}</div>`;
+
+  // ── Format-specific layout rules ──────────────────────────────────────────
+  const formatRules = {
+    flyer: `
+FORMAT: FLYER — 800×1050px portrait
+LAYOUT STRUCTURE (strict top-to-bottom):
+  • Zone 1 — Header bar (height ~80px): logo LEFT, IB code badge RIGHT
+  • Zone 2 — Hero (height ~420px): large decorative element (orb/emoji/SVG) centered or offset. Background atmospheric glow in brand colors.
+  • Zone 3 — Headline (height ~160px): main offer text. Font 64-80px bold. Key number 110-130px with glow/metallic effect.
+  • Zone 4 — Sub-copy (height ~120px): 2-3 benefit bullet points. Icons + short text.
+  • Zone 5 — CTA (height ~100px): ONE glowing button, centered. Large, unmissable.
+  • Zone 6 — Footer (height ~80px): broker URL + disclaimer text 10px
+RULE: No element bleeds between zones. Zones stack vertically. Clear whitespace between each.`,
+
+    banner: `
+FORMAT: BANNER — 1200×400px horizontal leaderboard
+LAYOUT STRUCTURE (strict left-to-right columns):
+  • Column 1 (width ~300px): logo top-left + brand name. Below: IB code box.
+  • Column 2 (width ~480px): HERO zone. Massive headline 60-80px + key number 100px. Sub-headline 18px below.
+  • Column 3 (width ~200px): decorative visual (orb, chart SVG, emoji 120px).
+  • Column 4 (width ~220px): CTA button (full width of column, ~180px wide). Below: broker URL.
+RULE: Columns are EQUAL HEIGHT (400px). Use flex or grid. NO vertical stacking of columns.
+Divider: thin glowing vertical line (1px, brand color, 60% opacity) between columns 1-2 and 3-4.`,
+
+    social: `
+FORMAT: SOCIAL POST — 1080×1080px square
+LAYOUT STRUCTURE:
+  • Background: full-bleed atmospheric (dark + radial glow in brand colors from center or corner)
+  • Top-left: logo. Top-right: IB code badge (small, subtle).
+  • CENTER: primary content zone. Decorative element 200px+ behind or beside headline.
+  • Headline: 72-90px bold, centered or left-aligned. Key number: 120-140px.
+  • Below headline: 1-2 lines sub-copy, 20px.
+  • Bottom center: CTA button. Bottom bar: broker URL + disclaimer.
+RULE: Design must look NATIVE to Instagram/WhatsApp. Bold, thumb-stopping. Single focal point.`,
+
+    email: `
+FORMAT: EMAIL TEMPLATE — 600px wide, variable height
+LAYOUT STRUCTURE:
+  • Header block (height ~120px): dark background, logo centered or left, optional tagline.
+  • Hero block (height ~280px): headline + subhead + decorative element. Dark or gradient bg.
+  • Offer block (height ~180px): key offer in a highlighted box (glassmorphism or solid accent color). IB code prominent.
+  • Benefits block (height ~200px): 3 columns, icon + title + 1 line text each. Light dark bg.
+  • CTA block (height ~120px): large centered button + supporting text.
+  • Footer block (height ~80px): broker URL, IB code, disclaimer. Very dark bg.
+RULE: Each block has clear background distinction. Blocks must be visually separated. Mobile-safe (single column structure).`
+  };
+
+  return `You are an elite AI creative director generating premium financial marketing HTML.
+
+ACADEMY/BROKER: ${brokerName}
+WEBSITE: ${brokerUrl}
+IB CODE: ${ibCode}
+LANGUAGE: ${matLang}
+QUALITY: ${qDesc[quality]}
+PRIMARY COLOR: ${colorPrim}
+ACCENT COLOR: ${colorAccent}
+
+TASK: Generate ONE complete self-contained HTML file. Return ONLY raw HTML. Start immediately with <!DOCTYPE html>. No markdown, no code fences, no explanation, nothing before <!DOCTYPE html>.
+
+${formatRules[fmt]}
+
+═══ CRITICAL: BACKGROUND & DEPTH ═══
+• <body> MUST have explicit dark background. Use PRIMARY COLOR darkened as base tone.
+• NEVER white, NEVER light. Base: very dark version of ${colorPrim} (e.g. mix with #050510).
+• Add depth layers: (1) radial-gradient glow using ${colorPrim} at 15-25% opacity, (2) subtle noise texture via SVG feTurbulence, (3) optional diagonal lines at 3% opacity.
+
+═══ BRAND COLOR USAGE ═══
+• PRIMARY ${colorPrim}: main CTAs, key numbers glow, borders of hero elements, active states.
+• ACCENT ${colorAccent}: secondary highlights, bullet icons, badge borders, shimmer effects.
+• NEVER use generic purple/blue unless it IS the brand color. Use the provided colors throughout.
+
+═══ MANDATORY BRANDING ═══
+1. Logo/Name (per layout above): ${logoInstruction}
+2. IB CODE BOX:
+<div style="background:rgba(0,0,0,0.5);border:1px solid ${colorAccent}55;border-radius:10px;padding:8px 14px;display:inline-block;backdrop-filter:blur(10px);">
+  <div style="font-size:9px;color:${colorAccent};text-transform:uppercase;letter-spacing:0.12em;margin-bottom:2px;">IB Code</div>
+  <div style="font-size:18px;font-weight:700;color:#fff;font-family:monospace;letter-spacing:0.05em;">${ibCode}</div>
+</div>
+3. "${brokerUrl}" in footer (small, subtle)
+4. Disclaimer: "CFDs are complex instruments. High risk of losing money." (10px, muted)
+
+═══ TYPOGRAPHY ═══
+• Import ONE Google Font: 'Bebas Neue', 'Anton', 'Barlow Condensed', 'Playfair Display', or 'Oswald'
+• Apply imported font to headlines ONLY. Body: system-ui or -apple-system.
+• Body text minimum 16px. Line-height 1.5–1.75 for all paragraph/sub-copy text.
+• Line length max 65–75 chars for readability. Never stretch body text full-width.
+• Key number glow: text-shadow: 0 0 40px ${colorPrim}cc, 0 0 80px ${colorPrim}66;
+• Text contrast MUST be minimum 4.5:1 ratio. Never use muted colors below #888 for any readable text.
+
+═══ DECORATIVE ELEMENT (mandatory, 150px+) ═══
+Choose ONE that fits the layout zone:
+• Option A: Inline SVG financial icon (chart bars, candlestick, globe lines, abstract rings, upward arrow) — min 150px, colored with brand colors. PREFERRED.
+• Option B: CSS orb: <div style="width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,${colorPrim}99,transparent);box-shadow:0 0 100px ${colorPrim}66;"></div>
+• Option C: Large emoji ONLY as accent, never as a UI icon: <span style="font-size:150px;filter:drop-shadow(0 0 30px ${colorPrim});">💰</span>
+RULE: NEVER use emojis as functional UI icons (buttons, bullets, badges). Use inline SVG for all icons.
+
+═══ ICONS (MANDATORY RULE) ═══
+ALL UI icons (bullets, feature checkmarks, stat icons, badges) MUST be inline SVG. Example:
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${colorAccent}" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+NEVER use emoji characters as icons. NEVER use external icon libraries (no CDN icon fonts).
+
+═══ CTA BUTTON ═══
+<button style="background:linear-gradient(135deg,${colorPrim},${colorAccent});color:#fff;font-size:18px;font-weight:700;padding:18px 48px;border-radius:50px;border:none;cursor:pointer;box-shadow:0 0 40px ${colorPrim}88,0 4px 24px rgba(0,0,0,0.4);letter-spacing:0.05em;text-transform:uppercase;transition:transform 0.15s ease,box-shadow 0.15s ease;">START NOW</button>
+• CTA hover: transform:translateY(-2px) + increased box-shadow. Add via <style> block, never inline onmouseover.
+• ALL clickable elements MUST have cursor:pointer.
+• All interactive elements: transition: all 0.15s ease (never instant, never >300ms).
+
+═══ FINTECH TRUST SIGNALS ═══
+Include at least 2 of these trust elements naturally within the layout:
+• Regulated broker badge: small pill with shield SVG icon + "Regulated Broker" or equivalent
+• Stat row: 3 micro-stats (e.g. "50,000+ traders", "10+ years", "24/7 support") with SVG icons
+• Security note: lock SVG icon + "Secure & Encrypted" near CTA
+These must use brand colors, SVG icons (no emoji), and fit the dark theme.
+
+═══ RESPONSIVE & MOBILE ═══
+• Include <meta name="viewport" content="width=device-width, initial-scale=1"> in <head>.
+• All layouts must be viewable at 375px width — use @media (max-width:600px) to stack columns vertically.
+• No horizontal scroll. Overflow hidden on body if needed.
+• Touch targets minimum 44×44px for all buttons and interactive elements.
+• Z-index scale: decorative=1, content=10, overlay=20, modal=30, fixed=50.
+
+═══ ANIMATIONS (PREMIUM/ULTRA ONLY) ═══
+• Micro-interactions: 150–300ms duration only. Never exceed 400ms for UI transitions.
+• Use transform and opacity for animations. NEVER animate width, height, or layout properties.
+• Add @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+• Glow pulse example: @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px ${colorPrim}66} 50%{box-shadow:0 0 50px ${colorPrim}cc} }
+
+═══ OUTPUT FORMAT ═══
+• First character must be: <
+• Last characters must be: </html>
+• Zero text, comments, or markdown outside HTML tags`;
+}
+
+// ── BRANDING FOOTER INJECTION ─────────────────────────────────────────────────
+function injectBranding(html) {
+  const brokerName = document.getElementById('brokerName').value.trim() || 'Broker';
+  const brokerUrl  = document.getElementById('brokerUrl').value.trim()  || 'broker.com';
+  const ibCode     = document.getElementById('ibCode').value.trim()     || 'IB-0000';
+
+  const logoHtml = brokerLogoBase64
+    ? `<img src="${brokerLogoBase64}" alt="${brokerName}" style="height:24px;width:auto;">`
+    : `<span style="color:#fff;font-weight:700;font-size:14px;">${brokerName}</span>`;
+
+  const footer = `<div style="position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,rgba(4,8,25,0.97),rgba(8,18,45,0.97));padding:8px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(91,79,234,0.3);z-index:99999;font-family:-apple-system,sans-serif;backdrop-filter:blur(12px);">${logoHtml}<span style="color:#3a3860;font-size:10px;">${brokerUrl}</span><span style="color:#5b4fea;font-size:10px;background:rgba(91,79,234,0.12);padding:3px 10px;border-radius:12px;border:1px solid rgba(91,79,234,0.3);">${ibCode}</span></div><div style="height:46px;"></div>`;
+  return html.includes('</body>') ? html.replace('</body>', footer + '</body>') : html + footer;
+}
+
+// ── CHAT ──────────────────────────────────────────────────────────────────────
+function addMsg(txt, cls) {
+  const box = document.getElementById('chatBox');
+  const d = document.createElement('div');
+  d.className = `msg ${cls}`;
+  if (cls === 'mt') d.id = 'thinkMsg';
+  d.textContent = txt;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+function removeThinking() {
+  const el = document.getElementById('thinkMsg');
+  if (el) el.remove();
+}
+
+// ── SEND (multi-turn) ─────────────────────────────────────────────────────────
+async function send() {
+  const input = document.getElementById('msgInput');
+  const btn   = document.getElementById('sendBtn');
+  const text  = input.value.trim();
+  if (!text) return;
+
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey)  { addMsg(T[lang].noKey,    'mb'); return; }
+  const broker  = document.getElementById('brokerName').value.trim();
+  if (!broker)  { addMsg(T[lang].noBroker, 'mb'); return; }
+
+  input.value = '';
+  autoResize(input);
+  btn.disabled = true;
+
+  // Build user message
+  const isRefinement = conversationHistory.length > 0;
+  const userContent = isRefinement
+    ? `Modify the existing design: ${text}. Keep everything else the same. Return only the complete updated HTML.`
+    : `Create a ${fmt} for: ${text}`;
+
+  conversationHistory.push({ role: 'user', content: userContent });
+
+  addMsg(text, 'mu');
+  addMsg(T[lang].thinking, 'mt');
+  showGenerating();
+
+  const maxTok = quality === 'ultra' ? 7000 : quality === 'premium' ? 5000 : 3500;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTok,
+        system: getSystemPrompt(),
+        messages: conversationHistory
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      removeThinking();
+      conversationHistory.pop(); // remove failed user message
+      addMsg('❌ API Error: ' + (data.error?.message || `${res.status} ${res.statusText}`), 'mb');
+      showEmpty();
+      btn.disabled = false;
+      return;
+    }
+
+    let html = data.content?.[0]?.text || '';
+    removeThinking();
+
+    // Add assistant response to history
+    conversationHistory.push({ role: 'assistant', content: html });
+
+    if (html) {
+      html = html.replace(/^[\s\S]*?```(?:html)?\s*\n/i, '').replace(/\n?```[\s\S]*$/, '').trim();
+      html = injectBranding(html);
+      generatedHTML = html;
+
+      addMsg(T[lang].done, 'mb');
+      showInlinePreview(html);
+
+      document.getElementById('previewLbl').textContent = `— ${fmt} • ${quality}`;
+      document.getElementById('pActions').style.display = 'flex';
+      document.getElementById('refineBar').classList.add('visible');
+      document.getElementById('clearHistBtn').style.display = 'block';
+      document.getElementById('msgInput').placeholder = T[lang].refinePlaceholder;
+    } else {
+      conversationHistory.pop();
+      addMsg(T[lang].error, 'mb');
+      showEmpty();
+    }
+  } catch(e) {
+    removeThinking();
+    conversationHistory.pop();
+    addMsg('❌ ' + (e.message.includes('fetch') ? 'Network error.' : e.message), 'mb');
+    showEmpty();
+  }
+
+  btn.disabled = false;
+}
+
+function clearConversation() {
+  conversationHistory = [];
+  generatedHTML = '';
+  document.getElementById('pActions').style.display = 'none';
+  document.getElementById('refineBar').classList.remove('visible');
+  document.getElementById('clearHistBtn').style.display = 'none';
+  document.getElementById('msgInput').placeholder = T[lang].placeholder;
+  document.getElementById('previewLbl').textContent = '— preview';
+  hideFrame();
+  showEmpty();
+  const box = document.getElementById('chatBox');
+  // keep only first 2 messages (sys + welcome)
+  while (box.children.length > 2) box.removeChild(box.lastChild);
+}
+
+function regen() {
+  if (conversationHistory.length < 2) return;
+  conversationHistory.pop(); // remove last assistant
+  const lastUser = conversationHistory.pop(); // remove last user
+  const cleaned = lastUser.content
+    .replace(/^Modify the existing design:\s*/i, '')
+    .replace(/^Create a \w+ for:\s*/i, '')
+    .replace(/\.\s*Keep everything else the same\..*/i, '')
+    .trim();
+  document.getElementById('msgInput').value = cleaned;
+  send();
+}
+
+// ── COPY HTML ─────────────────────────────────────────────────────────────────
+async function copyHTML() {
+  if (!generatedHTML) return;
+  try {
+    await navigator.clipboard.writeText(generatedHTML);
+    const btn = document.getElementById('btnCopy');
+    const prev = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.color = 'var(--accent2)';
+    setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 2000);
+  } catch(e) {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = generatedHTML;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+// ── INLINE PREVIEW ────────────────────────────────────────────────────────────
+function showInlinePreview(html) {
+  const frame = document.getElementById('previewFrame');
+  const stateEl = document.getElementById('stateEl');
+  stateEl.style.display = 'none';
+  frame.classList.add('visible');
+  // Write into iframe
+  frame.srcdoc = html;
+}
+
+function hideFrame() {
+  const frame = document.getElementById('previewFrame');
+  frame.classList.remove('visible');
+  frame.srcdoc = '';
+  document.getElementById('stateEl').style.display = 'flex';
+}
+
+function openFull() {
+  if (!generatedHTML) return;
+  const win = window.open('', '_blank');
+  if (!win) { alert('Popup blocked. Allow popups for this page.'); return; }
+  win.document.open();
+  win.document.write(generatedHTML);
+  win.document.close();
+}
+
+// ── DOWNLOAD ──────────────────────────────────────────────────────────────────
+function dl() {
+  if (!generatedHTML) return;
+  const broker = (document.getElementById('brokerName').value || 'broker').replace(/\s+/g,'_').toLowerCase();
+  const ibCode = document.getElementById('ibCode').value || 'IB-0000';
+  const blob = new Blob([generatedHTML], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${broker}_${fmt}_${quality}_${ibCode}_${Date.now()}.html`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+// ── DOWNLOAD PNG ──────────────────────────────────────────────────────────────
+async function dlPNG() {
+  if (!generatedHTML) return;
+  const btn = document.getElementById('btnPng');
+  const origText = btn.textContent;
+  btn.textContent = '⏳ Rendering...';
+  btn.disabled = true;
+
+  try {
+    // Render in a hidden iframe at full resolution
+    const broker = (document.getElementById('brokerName').value || 'broker').replace(/\s+/g,'_').toLowerCase();
+    const ibCode = document.getElementById('ibCode').value || 'IB-0000';
+
+    // Determine canvas size by format
+    const sizes = { flyer:[800,1050], banner:[1200,400], social:[1080,1080], email:[600,900] };
+    const [w, h] = sizes[fmt] || [800,1050];
+
+    // Create a temporary iframe off-screen at exact design size
+    const tmpFrame = document.createElement('iframe');
+    tmpFrame.style.cssText = `position:fixed;left:-9999px;top:-9999px;width:${w}px;height:${h}px;border:none;visibility:visible;`;
+    tmpFrame.sandbox = 'allow-scripts allow-same-origin';
+    document.body.appendChild(tmpFrame);
+
+    await new Promise(resolve => {
+      tmpFrame.onload = resolve;
+      tmpFrame.srcdoc = generatedHTML;
+    });
+
+    // Wait for fonts/images inside iframe to settle
+    await new Promise(r => setTimeout(r, 1200));
+
+    const iframeDoc = tmpFrame.contentDocument || tmpFrame.contentWindow.document;
+    const canvas = await html2canvas(iframeDoc.body, {
+      width: w,
+      height: h,
+      scale: 2, // 2x for retina quality
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      logging: false,
+      windowWidth: w,
+      windowHeight: h
+    });
+
+    document.body.removeChild(tmpFrame);
+
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${broker}_${fmt}_${ibCode}_${Date.now()}.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      btn.textContent = '✓ PNG saved!';
+      btn.style.color = 'var(--accent2)';
+      setTimeout(() => { btn.textContent = origText; btn.style.color = ''; btn.disabled = false; }, 2500);
+    }, 'image/png');
+
+  } catch(e) {
+    console.error('PNG export error:', e);
+    btn.textContent = '❌ Failed';
+    setTimeout(() => { btn.textContent = origText; btn.disabled = false; }, 2000);
+  }
+}
+
+
+function showEmpty() {
+  const t = T[lang];
+  const s = document.getElementById('stateEl');
+  // Restore static structure if it was replaced by showGenerating
+  if (!document.getElementById('emptyTitle')) {
+    s.innerHTML = `
+      <div class="state-icon">✦</div>
+      <div class="state-title" id="emptyTitle"></div>
+      <div class="state-sub" id="emptySub"></div>
+      <div class="tips">
+        <div class="tip"><b>💡</b> <span id="tip1"></span></div>
+        <div class="tip"><b>💡</b> <span id="tip2"></span></div>
+        <div class="tip"><b>💡</b> <span id="tip3"></span></div>
+      </div>`;
+  }
+  document.getElementById('emptyTitle').textContent = t.emptyTitle;
+  document.getElementById('emptySub').textContent   = t.emptySub;
+  document.getElementById('tip1').textContent = t.tip1;
+  document.getElementById('tip2').textContent = t.tip2;
+  document.getElementById('tip3').textContent = t.tip3;
+  s.style.display = 'flex';
+}
+
+function showGenerating() {
+  const t = T[lang];
+  hideFrame();
+  document.getElementById('stateEl').innerHTML = `
+    <div class="spinner"></div>
+    <div class="gen-steps">
+      <div class="gstep active" id="gs1">${t.gen1}</div>
+      <div class="gstep" id="gs2">${t.gen2}</div>
+      <div class="gstep" id="gs3">${t.gen3}</div>
+    </div>
+    <div class="gen-note">${t.qualNote(quality)}</div>`;
+  document.getElementById('stateEl').style.display = 'flex';
+
+  let s = 1;
+  const iv = setInterval(() => {
+    if (s >= 3) return clearInterval(iv);
+    const prev = document.getElementById(`gs${s}`);
+    if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+    s++;
+    const cur = document.getElementById(`gs${s}`);
+    if (cur) cur.classList.add('active');
+  }, 1300);
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
+  saveSettings();
+  applyLang();
+}
+function setFmt(el, f) {
+  el.closest('.chips').querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  fmt = f;
+  saveSettings();
+}
+function setQuality(el, q) {
+  el.closest('.qchips').querySelectorAll('.qchip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  quality = q;
+  saveSettings();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ── APPLY LANG ────────────────────────────────────────────────────────────────
+function applyLang() {
+  const t = T[lang];
+  const set = (id, val, isHtml=false) => { const el = document.getElementById(id); if(el) isHtml ? el.innerHTML=val : el.textContent=val; };
+
+  set('badgeText', t.badge);
+  set('sysMsg', t.sysMsg);
+  set('welcomeMsg', t.welcome);
+  document.getElementById('msgInput').placeholder = conversationHistory.length > 0 ? t.refinePlaceholder : t.placeholder;
+
+  set('lbl-chat', t.lChat); set('lbl-quick', t.lQuick); set('lbl-settings', t.lSettings);
+  set('lbl-api', t.lApi); set('lbl-broker', t.lBroker); set('lbl-brokerurl', t.lBrokerUrl);
+  set('lbl-logo', t.lLogo); set('lbl-ib', t.lIb); set('lbl-lang', t.lLang);
+  set('lbl-fmt', t.lFmt); set('lbl-qual', t.lQual); set('lbl-rules', t.lRules);
+  set('lbl-colors', t.lColors);
+  set('lbl-color-primary', t.lColorPrimary);
+  set('lbl-color-accent', t.lColorAccent);
+  set('rule1', t.r1, true); set('rule2', t.r2, true); set('rule3', t.r3, true); set('rule4', t.r4, true);
+  set('btnRegen', t.btnRegen); set('btnCopy', t.btnCopy); set('btnPng', t.btnPng); set('btnOpen', t.btnOpen); set('btnDl', t.btnDl);
+  set('refineHint', t.refineHint);
+  set('clearHistBtn', t.clearHist);
+
+  document.getElementById('lbl-logo-title').textContent = brokerLogoBase64 ? t.logoUploaded : t.logoTitle;
+  document.getElementById('lbl-logo-sub').textContent = t.logoSub;
+
+  const ql = document.getElementById('quickList');
+  ql.innerHTML = '';
+  QUICK[lang].forEach(q => {
+    const b = document.createElement('button');
+    b.className = 'qbtn';
+    b.innerHTML = `<span style="margin-right:5px;">${q.icon}</span>${q.text}`;
+    b.onclick = () => { document.getElementById('msgInput').value = q.text; send(); };
+    ql.appendChild(b);
+  });
+
+  if (!generatedHTML) showEmpty();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  applyLang();
+});
+</script>
+</body>
+</html>
